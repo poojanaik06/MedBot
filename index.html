@@ -17,7 +17,7 @@
 
     <h2>Medbot - Your Health Assistant</h2>
     <div id="chatbox"></div>
-    <input type="text" id="userInput" placeholder="Type your message...">
+    <input type="text" id="userInput" placeholder="Type a number (1-4)...">
     <button onclick="sendMessage()">Send</button>
 
     <script>
@@ -27,47 +27,44 @@
             messageDiv.className = "message " + sender;
             messageDiv.textContent = text;
             chatbox.appendChild(messageDiv);
-            chatbox.scrollTop = chatbox.scrollHeight; 
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function displayMenu() {
+            return "Welcome to Medbot!\nPlease select an option:\n1. General Health Advice\n2. Symptoms Check\n3. Schedule an Appointment\n4. Exit";
         }
 
         function generalAdvice() {
             return "General Health Advice:\n- Eat a balanced diet.\n- Exercise regularly.\n- Get enough sleep (7-8 hours).\n- Stay hydrated.";
         }
 
-        function symptomsCheck(symptom) {
+        function symptomsCheck() {
+            return "Enter the symptom you are experiencing (e.g., fever, headache, cough):";
+        }
+
+        function getSymptomResponse(symptom) {
             symptom = symptom.toLowerCase();
             if (symptom === "fever") {
-                return "You may have an infection. Rest, stay hydrated, and monitor your temperature. Consult a doctor if it persists.";
+                return "You may have an infection. Rest, stay hydrated, and monitor your temperature.";
             } else if (symptom === "headache") {
-                return "It could be due to stress or dehydration. Drink water, rest, and consult a doctor if it continues.";
+                return "It could be stress or dehydration. Drink water and take rest.";
             } else if (symptom === "cough") {
-                return "A cough might be a cold or allergy. Drink warm fluids. If it lasts more than a week, see a doctor.";
+                return "A cough might be a cold or allergy. Drink warm fluids.";
             } else {
-                return "I'm not familiar with that symptom. Please consult a healthcare professional.";
+                return "I'm not familiar with that symptom. Please consult a doctor.";
             }
         }
 
-        function scheduleAppointment(name, date, doc) {
-            return `Thank you, ${name}. Your appointment with Dr. ${doc} has been scheduled for ${date}.`;
+        function scheduleAppointment() {
+            return "Please enter your name, date (YYYY-MM-DD), and doctor's name separated by commas (e.g., John, 2024-09-10, Smith)";
         }
 
-        function handleUserInput(input) {
-            input = input.toLowerCase();
-            if (input.includes("health advice")) {
-                return generalAdvice();
-            } else if (input.includes("symptom")) {
-                return "Please enter the symptom (e.g., fever, headache, cough):";
-            } else if (input.includes("appointment")) {
-                return "Please enter your name, date (YYYY-MM-DD), and doctor’s name separated by commas (e.g., John, 2024-09-10, Smith)";
-            } else {
-                const words = input.split(",");
-                if (words.length === 1) {
-                    return symptomsCheck(words[0].trim());
-                } else if (words.length === 3) {
-                    return scheduleAppointment(words[0].trim(), words[1].trim(), words[2].trim());
-                }
-                return "I didn't understand that. Please select an option: Health Advice, Symptom Check, or Appointment.";
+        function confirmAppointment(input) {
+            const details = input.split(",");
+            if (details.length === 3) {
+                return `Thank you, ${details[0].trim()}. Your appointment with Dr. ${details[2].trim()} is scheduled for ${details[1].trim()}.`;
             }
+            return "Invalid format. Please enter your name, date, and doctor's name.";
         }
 
         function sendMessage() {
@@ -77,12 +74,32 @@
 
             displayMessage("You: " + userText, "user");
             setTimeout(() => {
-                const botResponse = handleUserInput(userText);
+                let botResponse = "";
+
+                if (userText === "1") {
+                    botResponse = generalAdvice();
+                } else if (userText === "2") {
+                    botResponse = symptomsCheck();
+                } else if (userText === "3") {
+                    botResponse = scheduleAppointment();
+                } else if (userText === "4") {
+                    botResponse = "Thank you for using Medbot. Stay healthy!";
+                } else if (userText.includes(",")) {
+                    botResponse = confirmAppointment(userText);
+                } else {
+                    botResponse = getSymptomResponse(userText);
+                }
+
                 displayMessage("Bot: " + botResponse, "bot");
             }, 500);
 
             inputField.value = "";
         }
+
+        // Display menu when chatbot loads
+        window.onload = function() {
+            displayMessage("Bot: " + displayMenu(), "bot");
+        };
     </script>
 
 </body>
