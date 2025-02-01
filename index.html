@@ -5,12 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medbot</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #chatbox { width: 350px; height: 400px; border: 1px solid #000; overflow-y: auto; margin: 20px auto; padding: 10px; }
-        .message { margin: 5px; padding: 10px; border-radius: 5px; }
-        .user { background-color: #cce5ff; text-align: right; }
-        .bot { background-color: #d4edda; text-align: left; }
-        input, button { margin-top: 10px; padding: 10px; }
+        @font-face {
+            font-family: 'Aptos';
+            src: url('https://fonts.cdnfonts.com/s/97049/Aptos-Regular.woff') format('woff');
+        }
+        body {
+            font-family: 'Aptos', sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        #chatbox {
+            width: 350px;
+            height: 400px;
+            border: 1px solid #000;
+            overflow-y: auto;
+            margin: 20px auto;
+            padding: 10px;
+            background: white;
+        }
+        .message {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .user {
+            background-color: #cce5ff;
+            text-align: right;
+        }
+        .bot {
+            background-color: #d4edda;
+        }
+        input, button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            font-family: 'Aptos', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -25,17 +56,22 @@
             const chatbox = document.getElementById("chatbox");
             const messageDiv = document.createElement("div");
             messageDiv.className = "message " + sender;
-            messageDiv.textContent = text;
+            messageDiv.innerHTML = text.replace(/\n/g, '<br>'); // New line support
             chatbox.appendChild(messageDiv);
             chatbox.scrollTop = chatbox.scrollHeight;
         }
 
         function displayMenu() {
-            return "Welcome to Medbot!\nPlease select an option:\n1. General Health Advice\n2. Symptoms Check\n3. Schedule an Appointment\n4. Exit";
+            return "Welcome to Medbot!<br>" +
+                   "Please select an option:<br>" +
+                   "1. General Health Advice<br>" +
+                   "2. Symptoms Check<br>" +
+                   "3. Schedule an Appointment<br>" +
+                   "4. Exit";
         }
 
         function generalAdvice() {
-            return "General Health Advice:\n- Eat a balanced diet.\n- Exercise regularly.\n- Get enough sleep (7-8 hours).\n- Stay hydrated.";
+            return "General Health Advice:<br>- Eat a balanced diet.<br>- Exercise regularly.<br>- Get enough sleep (7-8 hours).<br>- Stay hydrated.";
         }
 
         function symptomsCheck() {
@@ -86,6 +122,8 @@
                     botResponse = "Thank you for using Medbot. Stay healthy!";
                 } else if (userText.includes(",")) {
                     botResponse = confirmAppointment(userText);
+                } else if (/^\d+$/.test(userText)) { // If input is a number but not 1-4
+                    botResponse = "Invalid choice. Please enter a number between 1-4.";
                 } else {
                     botResponse = getSymptomResponse(userText);
                 }
