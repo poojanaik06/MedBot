@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #chatbox { width: 350px; height: 400px; border: 1px solid #000; overflow-y: auto; margin: 20px auto; padding: 10px; }
+        .message { margin: 5px; padding: 10px; border-radius: 5px; }
+        .user { background-color: #cce5ff; text-align: right; }
+        .bot { background-color: #d4edda; text-align: left; }
+        input, button { margin-top: 10px; padding: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Medbot - Your Health Assistant</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        function displayMessage(text, sender) {
+            const chatbox = document.getElementById("chatbox");
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "message " + sender;
+            messageDiv.textContent = text;
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight; 
+        }
+
+        function generalAdvice() {
+            return "General Health Advice:\n- Eat a balanced diet.\n- Exercise regularly.\n- Get enough sleep (7-8 hours).\n- Stay hydrated.";
+        }
+
+        function symptomsCheck(symptom) {
+            symptom = symptom.toLowerCase();
+            if (symptom === "fever") {
+                return "You may have an infection. Rest, stay hydrated, and monitor your temperature. Consult a doctor if it persists.";
+            } else if (symptom === "headache") {
+                return "It could be due to stress or dehydration. Drink water, rest, and consult a doctor if it continues.";
+            } else if (symptom === "cough") {
+                return "A cough might be a cold or allergy. Drink warm fluids. If it lasts more than a week, see a doctor.";
+            } else {
+                return "I'm not familiar with that symptom. Please consult a healthcare professional.";
+            }
+        }
+
+        function scheduleAppointment(name, date, doc) {
+            return `Thank you, ${name}. Your appointment with Dr. ${doc} has been scheduled for ${date}.`;
+        }
+
+        function handleUserInput(input) {
+            input = input.toLowerCase();
+            if (input.includes("health advice")) {
+                return generalAdvice();
+            } else if (input.includes("symptom")) {
+                return "Please enter the symptom (e.g., fever, headache, cough):";
+            } else if (input.includes("appointment")) {
+                return "Please enter your name, date (YYYY-MM-DD), and doctor’s name separated by commas (e.g., John, 2024-09-10, Smith)";
+            } else {
+                const words = input.split(",");
+                if (words.length === 1) {
+                    return symptomsCheck(words[0].trim());
+                } else if (words.length === 3) {
+                    return scheduleAppointment(words[0].trim(), words[1].trim(), words[2].trim());
+                }
+                return "I didn't understand that. Please select an option: Health Advice, Symptom Check, or Appointment.";
+            }
+        }
+
+        function sendMessage() {
+            const inputField = document.getElementById("userInput");
+            const userText = inputField.value.trim();
+            if (userText === "") return;
+
+            displayMessage("You: " + userText, "user");
+            setTimeout(() => {
+                const botResponse = handleUserInput(userText);
+                displayMessage("Bot: " + botResponse, "bot");
+            }, 500);
+
+            inputField.value = "";
+        }
+    </script>
+
+</body>
+</html>
